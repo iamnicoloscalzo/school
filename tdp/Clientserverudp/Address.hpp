@@ -15,11 +15,9 @@
 
 
 class Address {
-private: char* ip;
-		 int port;
+private:        char* ip;
+		int port;
 		static pthread_mutex_t mtx_set;
-	
-		
 	
 public:  Address(char*, int);
 		 Address();
@@ -69,8 +67,11 @@ int Address::getPort() {
 }
 
 void Address::setIp(char* ip) {
-	free(this->ip);
-	this->ip = strdup(ip);
+	
+	if(ip){
+         free(this->ip);
+        }
+        this->ip = strdup(ip);
 }
 
 void Address::setPort(int port) {
@@ -90,7 +91,8 @@ struct sockaddr_in Address::getSockaddr_in() {
 }
 
 void Address::setSockaddr_in(struct sockaddr_in address) {
-	pthread_mutex_lock(&mtx_set);
+	
+        pthread_mutex_lock(&mtx_set);
 	setIp(inet_ntoa(address.sin_addr));
 	this->port = ntohs(address.sin_port);
 	pthread_mutex_unlock(&mtx_set);
