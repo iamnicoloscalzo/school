@@ -15,8 +15,19 @@
 #define BUFSIZE 4096
 
 
-int main(int argc, char **argv[]) {
-    Address server(IP_LOOP,PORT);
+int main(int argc, char *argv[]) {
+    
+    if(argc != 3){
+      printf("Usage: %s \nServer IP ,Server PORT\n",argv[0]);
+      exit(1);
+    }
+
+    char *ip;
+    int serverport;
+    ip=argv[1];
+    serverport=atoi(argv[2]);
+
+    Address server(ip,serverport);
     struct sockaddr_in addrServer = server.getSockaddr_in();
     struct sockaddr_in mitt;
     int sockid;

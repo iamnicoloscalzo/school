@@ -54,10 +54,6 @@ int main(int argc, char **argv) {
 	   sizeof(addrMyself)) < 0) 
     error("ERRORE non sono riuscito in binding");
    
-
-
-
-
     /*
      * La funzione recvfrom() riceve un messaggio da un socket. 
      */
@@ -73,8 +69,8 @@ int main(int argc, char **argv) {
     
     char* clientToStr=client.toString();
    
-    printf("From: %s\t\"%s\"\n", clientToStr, buf);
-	
+    printf("From: %s\n", clientToStr);
+    printf("server ha ricevuto [%d/%d] bytes: %s\n", strlen(buf), ret, buf);
     free(clientToStr);
 
    /* 
@@ -89,7 +85,7 @@ int main(int argc, char **argv) {
       error("ERRORE on inet_ntoa\n");
     printf("server ha ricevuto il messaggio da %s (%s)\n", 
 	   hostinfo->h_name, hostaddrp);
-    printf("server ha ricevuto %d/%d bytes: %s\n", strlen(buf), ret, buf);
+    
     */
     /* 
      * sendto
