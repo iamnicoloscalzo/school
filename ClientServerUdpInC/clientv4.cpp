@@ -6,9 +6,9 @@
 #include <sys/types.h> 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "SocketUDP.hpp"
-#include "Address.hpp"
-#include "mylib.h"
+#include "../classi/SocketUDP.hpp"
+#include "../classi/Address.hpp"
+#include "../lib/mylib.h"
 
 #define IP_LOOP "127.0.0.1" 
 #define PORT 8000
@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
      La funzione sendto() viene utilizzata per inviare un messaggio ad un altro socket.
      La funzione sendto() ritorna il numero di byte inviati in caso di successo.
    */
-   bool ret=socket.inviaRaw(addrServer,buf,numByte);
-   if(ret==true){
+   bool retur=socket.inviaRaw(addrServer,buf,numByte);
+   if(retur==true){
 	printf("Messaggio Inviato\n");
    }else{
     	printf("Messaggio non Inviato\n");
@@ -69,9 +69,14 @@ int main(int argc, char *argv[]) {
    /* Stampa il messaggio ricevuto indietro dal server
       La funzione recv() riceve un messaggio da un socket. 
    */
-   char *buffer=socket.ricevi(mittente);
-   printf("Echo da server: %s\n",buffer);
-   free(buffer);
+   int ret=0;
+    char* buff= socket.riceviRaw(mittente,&ret);
+	char* clientToStr=mittente.toString();
+   
+    printf("From: %s\n", clientToStr);
+    printf("Da server ho ricevuto [%d] bytes: %s\n",  ret, buf);
+    free(clientToStr);
+	free(buff);
    
    return 0;
    
