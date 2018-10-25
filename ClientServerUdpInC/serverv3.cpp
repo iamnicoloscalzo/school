@@ -7,31 +7,33 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "ocketUDP.hpp"
+#include "SocketUDP.hpp"
 #include "Address.hpp"
 #include "mylib.h"
 
 #define IP_LOOP "127.0.0.1"
-#define PORT 9999
+#define PORT 8001
 #define BUFSIZE 4096
 #define IP_DHCP "0.0.0.0"
 
 int main(int argc, char** argv)
 {
-
+    if (argc != 3) {
+        printf("Usage: %s \nServer IP ,Server PORT\n", argv[0]);
+        exit(1);
+    }
+    int portosend;
+    portosend = atoi(argv[2]);
+    char* ip;
+    int serverport;
+    ip = argv[1];
     Address mySelf(IP_DHCP, PORT);
     Address addr;
-    int ret;
+    Address sendTo_(ip, portosend);
 
     SocketUDP socket(mySelf);
-
-    char* buff = socket.riceviRaw(addr, &ret);
-    char* clientToStr = addr.toString();
-
-    printf("From: %s\n", clientToStr);
-    printf("server ha ricevuto [%d] bytes: %s\n", ret, buff);
-    free(clientToStr);
-    bool retur = socket.invia(addr, buff);
+    char* buff = socket.ricevi(addr);
+    bool ret = socket.invia(sendTo_, buff);
     free(buff);
 
     return 0;
