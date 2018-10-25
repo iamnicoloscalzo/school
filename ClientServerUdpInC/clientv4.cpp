@@ -6,9 +6,9 @@
 #include <sys/types.h> 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "../classi/SocketUDP.hpp"
-#include "../classi/Address.hpp"
-#include "../lib/mylib.h"
+#include "SocketUDP.hpp"
+#include "Address.hpp"
+#include "mylib.h"
 
 #define IP_LOOP "127.0.0.1" 
 #define PORT 8000
