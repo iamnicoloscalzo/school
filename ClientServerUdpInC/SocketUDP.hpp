@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Address.hpp"
-#include "mylib.h"
+#include "../lib/mylib.h"
 
 class SocketUDP {
 private:       int sockid;
@@ -23,9 +23,9 @@ public:
                  SocketUDP(Address mySelf);
 		 int sockkid();
 		 bool invia(Address dest ,const char* msg);
-         bool inviaRaw(Address dest ,const char* msg,int numByte);
-		 char* riceviRaw(Address&);			
+         bool inviaRaw(Address dest ,const char* msg,int numByte);			
 	     char* ricevi(Address&);
+		 char* riceviRaw(Address& , int* nBytes);
 		 void nSocketUDP();	
 		~SocketUDP();
 		 
@@ -65,6 +65,7 @@ bool SocketUDP::invia(Address dest ,const char* msg){
                 return true;
 	};
 }
+
 /******************************/
 char* SocketUDP::ricevi(Address& mitt){
     char buff[BUFSIZE+1];
@@ -91,6 +92,21 @@ bool SocketUDP::inviaRaw(Address dest ,const char* msg, int numByte){
 	};
 }
 /******************************/
+/******************************/
+char* SocketUDP:: riceviRaw(Address& mitt, int* nBytes){
+    char buff[BUFSIZE+1];
+    int clientlen = (socklen_t)sizeof(struct sockaddr_in);
+    bzero(buff, BUFSIZE+1);
+    struct sockaddr_in mittente;
+    int ret = recvfrom(sockid, buff, BUFSIZE, 0,
+		 (struct sockaddr *) &mittente, (socklen_t *) &clientlen);
+    if (ret < 0)
+      error("ERRORE in recvfrom");
+    buff[ret]='\0';
+    mitt.setSockaddr_in(mittente);
+	*nBytes = ret;
+    return strdup(buff);
+}
 /******************************
 void SocketUDP::nSocketUDP(){
    int ret = close(sockid);
