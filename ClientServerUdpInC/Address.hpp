@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <pthread.h>
-#include "../lib/mylib.h"
+#include "mylib.h"
 
 
 class Address {
