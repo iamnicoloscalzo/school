@@ -3,36 +3,36 @@
 #include <stdlib.h>
 #include <string.h>
 #include <netdb.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "../classi/SocketUDP.hpp"
 #include "../classi/Address.hpp"
 #include "../lib/mylib.h"
 
-#define IP_LOOP "127.0.0.1" 
+#define IP_LOOP "127.0.0.1"
 #define PORT 8000
 #define BUFSIZE 4096
 
+int main(int argc, char* argv[])
+{
 
-int main(int argc, char *argv[]) {
-    
-    if(argc != 5){
-      printf("Usage: %s \nServer IP ,Server PORT, MSG , NUM BYTE\n",argv[0]);
-      exit(1);
+    if (argc != 5) {
+        printf("Usage: %s \nServer IP ,Server PORT, MSG , NUM BYTE\n", argv[0]);
+        exit(1);
     }
 
-    char *ip;
+    char* ip;
     int serverport;
     Address mittente;
-    ip=argv[1];
-    serverport=atoi(argv[2]);
-    Address server(ip,serverport);
+    ip = argv[1];
+    serverport = atoi(argv[2]);
+    Address server(ip, serverport);
     struct sockaddr_in addrServer = server.getSockaddr_in();
-    char *buf= argv[3];
-	int numByte= atoi(argv[4]);
+    char* buf = argv[3];
+    int numByte = atoi(argv[4]);
 
-   /* 
+    /* 
     La funzione socket() crea un endpoint di  comunicazione (socket)
 	 e ritorna un descrittore di file che si riferisce 
 	 all'endpoint appena creato.
@@ -44,40 +44,36 @@ int main(int argc, char *argv[]) {
    */
     SocketUDP socket;
     socket.sockkid();
-    
 
-
-   /* Far inserire il messaggio dall'utente 
+    /* Far inserire il messaggio dall'utente 
    bzero(buf, BUFSIZE);
    printf("Inserire il messaggio: ");
    fgets(buf, BUFSIZE, stdin);*/
 
-   /* Invia il messaggio al server 
+    /* Invia il messaggio al server 
      La funzione sendto() viene utilizzata per inviare un messaggio ad un altro socket.
      La funzione sendto() ritorna il numero di byte inviati in caso di successo.
    */
-   bool retur=socket.inviaRaw(addrServer,buf,numByte);
-   if(retur==true){
-	printf("Messaggio Inviato\n");
-   }else{
-    	printf("Messaggio non Inviato\n");
-	error("Errore sent to\n");
-   }
-	
+    bool retur = socket.inviaRaw(addrServer, buf, numByte);
+    if (retur == true) {
+        printf("Messaggio Inviato\n");
+    }
+    else {
+        printf("Messaggio non Inviato\n");
+        error("Errore sent to\n");
+    }
 
-    
-   /* Stampa il messaggio ricevuto indietro dal server
+    /* Stampa il messaggio ricevuto indietro dal server
       La funzione recv() riceve un messaggio da un socket. 
    */
-   int ret=0;
-    char* buff= socket.riceviRaw(mittente,&ret);
-	char* clientToStr=mittente.toString();
-   
+    int ret = 0;
+    char* buff = socket.riceviRaw(mittente, &ret);
+    char* clientToStr = mittente.toString();
+
     printf("From: %s\n", clientToStr);
-    printf("Da server ho ricevuto [%d] bytes: %s\n",  ret, buf);
+    printf("Da server ho ricevuto [%d] bytes: %s\n", ret, buf);
     free(clientToStr);
-	free(buff);
-   
-   return 0;
-   
+    free(buff);
+
+    return 0;
 }
