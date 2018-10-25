@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "Address.hpp"
-#include "../lib/mylib.h"
+#include "mylib.h"
 
 class SocketUDP {
 private:       int sockid;
