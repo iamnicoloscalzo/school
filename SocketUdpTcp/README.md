@@ -1,5 +1,5 @@
 
-# SOCKET TCP/UDP in c/c++
+# SOCKET TCP-UDP in c/c++
 
 Simple socket tcp and socket udp implementation in c/c++ 
 ```
