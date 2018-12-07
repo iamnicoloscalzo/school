@@ -2,6 +2,7 @@
 # SOCKET TCP-UDP in c/c++
 
 Simple socket tcp and socket udp implementation in c/c++ 
+using helpfull classes  SocketTCP - SocketUDP created by me
 ```
 note* 
 may some clients/servers won't work cause of changes in class socketUDP or in class SocketTcp
