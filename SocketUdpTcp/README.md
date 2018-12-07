@@ -1,16 +1,11 @@
 
-# Project Title
+# SOCKET TCP/UDP in c/c++
 
-One Paragraph of project description goes here
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
+Simple socket tcp and socket udp implementation in c/c++ 
 ```
-Give examples
+note* 
+may some clients/servers won't work cause of changes in class socketUDP or in class SocketTcp
+to have them work just do few changes in clients/server that don't work 
 ```
+
+
