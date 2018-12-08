@@ -38,8 +38,11 @@ public:
     void connectToserver(Address *server);
     /*****************************************************/
     bool setBroadCast(bool set);
-    bool inviaFile(char* path , int clientSockid);
-    void* riceviFile(char* path);
+    bool inviaFileServer(char* path , int clientSockid);
+    void* riceviFileServer(int clientSockid,char* path);
+
+    bool inviaFileClient(char* path);
+    void* riceviFileClient(char* path);
 
 
     void nSocketTCP();
@@ -67,7 +70,7 @@ SocketTCP::SocketTCP()
 SocketTCP::SocketTCP(Address mySelf)
 {
     int socketid = sockkid();
-    printf("%d\t %d\n", socketid,sockid);
+    //printf("%d\t %d\n", socketid,sockid);
     struct sockaddr_in myself_addr = mySelf.getSockaddr_in();
     if (bind(socketid , (struct sockaddr*)&myself_addr,
             sizeof(struct sockaddr_in))
@@ -101,8 +104,7 @@ int SocketTCP::acceptConnection(Address *client){
 /******************************/
 void SocketTCP::connectToserver(Address *server){
   //struct sockaddr_in client;
-  printf("ghk%d",sockid);
-  printf("Hellworld\n" );
+
   struct sockaddr_in serv = server->getSockaddr_in();
   if(connect(sockid,(struct sockaddr *)&serv,sizeof(serv))<0){
     error("errore in connect\n");
@@ -147,8 +149,6 @@ void* SocketTCP::riceviRawServer(int clientSockid, int* nBytes)
 	    int ret = recv(clientSockid, buff, BUFSIZE, 0);
 	    if (ret < 0){
         error("ERRORE in recvfrom\n");
-      }else{
-        puts("Messaggio ricevuto");
       }
 
 	    *nBytes = ret;
@@ -191,43 +191,40 @@ void* SocketTCP::riceviRawClient(int* nBytes)
 	    int ret = recv(sockid, buff, BUFSIZE, 0);
 	    if (ret < 0){
         error("ERRORE in recvfrom\n");
-      }else{
-        puts("Messaggio ricevuto");
       }
-
 	    *nBytes = ret;
 	    return strdup(buff);
 }
-/*****************************
-bool SocketTCP::inviaFile(char* path , int clientSockid)
+/*****************************/
+bool SocketTCP::inviaFileServer(char* path , int clientSockid)
 {
 	int i=0;
   char ch;
-  printf("%s\n",path);
+  printf("File You have selected |%s|\n",path);
   int nPacchetti=0;
   FILE* fp = fopen(path,"r");
   if(fp == NULL){
 		int n_packet = 0;
-	  inviaRaw(clientSockid,&n_packet,(int)sizeof(int));
+	  inviaRawServer(clientSockid,&n_packet,(int)sizeof(int));
 		return true;
 	}
     fseek(fp,0,SEEK_END);
   	int file_size=ftell(fp);
   	fseek(fp,0,SEEK_SET);
-    nPacchetti =(BUFSIZE<file_size) ? file_size/BUFSIZE : (file_size/BUFSIZE) +1;
-    printf("%d\n",nPacchetti);
-    inviaRaw(clientSockid,&nPacchetti,(int)sizeof(int));
+    nPacchetti =(BUFSIZE%file_size==0) ? file_size/BUFSIZE : (file_size/BUFSIZE) +1;
+    printf("Numero di pachhetti |%d|\n",nPacchetti);
+    inviaRawServer(clientSockid,&nPacchetti,(int)sizeof(int));
     int sizePacc, temp=file_size;
     for(int i= 0; i<nPacchetti; i++){
      char file_buffer[BUFSIZE];
      sizePacc= ( (temp%BUFSIZE) == 0) ? BUFSIZE : (file_size%BUFSIZE);
-     printf("%d\n",sizePacc);
+     printf("Lunghezza pacchetto numero|%d| is |%d|\n",i+1,sizePacc);
      fread(file_buffer,sizePacc,1,fp);
       /*while (fgets(file_buffer, sizePacc, fp) != NULL){
         printf("%s", file_buffer);
-      }*//*
+      }*/
       temp-=sizePacc;
-      inviaRaw(clientSockid,file_buffer,sizePacc);
+      inviaRawServer(clientSockid,file_buffer,sizePacc);
 
   	}
   fclose(fp);
@@ -235,15 +232,73 @@ bool SocketTCP::inviaFile(char* path , int clientSockid)
 
 }
 /******************************/
-/*void* SocketTCP::riceviFile(char* path){
+void* SocketTCP::riceviFileServer(int clientSockid,char* path){
 	FILE * fp = fopen(path,"w");
 	int size;
 	int size_tot=0;
   Address mit;
-	int* n_packet = (int*)riceviRaw(clientSockid,&size);
+	int* n_packet = (int*)riceviRawServer(clientSockid,&size);
 
   for(int i= 0; i< *n_packet; i++){
-	    char* buffer = (char*) riceviRaw(clientSockid,&size);
+	    char* buffer = (char*) riceviRawServer(clientSockid,&size);
+      printf("Lunghezza pacchetto numero|%d| is |%d| byte\n",i+1,size);
+      //printf("Messaggio all'interno del pacchetto :\n%s\n",buffer);
+
+      size_tot+= size;
+		  fwrite(buffer,size,1,fp);
+	}
+	fclose(fp);
+	return (void*)size_tot;
+
+}
+/******************************/
+
+/******************************/
+bool SocketTCP::inviaFileClient(char* path)
+{
+	int i=0;
+  char ch;
+  printf("File You have selected |%s|\n",path);
+  int nPacchetti=0;
+  FILE* fp = fopen(path,"r");
+  if(fp == NULL){
+		int n_packet = 0;
+	  inviaRawClient(&n_packet,(int)sizeof(int));
+		return true;
+	}
+    fseek(fp,0,SEEK_END);
+  	int file_size=ftell(fp);
+  	fseek(fp,0,SEEK_SET);
+    nPacchetti =(BUFSIZE%file_size==0) ? file_size/BUFSIZE : (file_size/BUFSIZE) +1;
+    printf("Numero di pachhetti |%d|\n",nPacchetti);
+    inviaRawClient(&nPacchetti,(int)sizeof(int));
+    int sizePacc, temp=file_size;
+    for(int i= 0; i<nPacchetti; i++){
+     char file_buffer[BUFSIZE];
+     sizePacc= ( (temp%BUFSIZE) == 0) ? BUFSIZE : (file_size%BUFSIZE);
+     printf("Lunghezza pacchetto numero|%d| is |%d|\n",i+1,sizePacc);
+     fread(file_buffer,sizePacc,1,fp);
+      /*while (fgets(file_buffer, sizePacc, fp) != NULL){
+        printf("%s", file_buffer);
+      }*/
+      temp-=sizePacc;
+      inviaRawClient(file_buffer,sizePacc);
+
+  	}
+  fclose(fp);
+	return false;
+
+}
+/******************************/
+void* SocketTCP::riceviFileClient(char* path){
+	FILE * fp = fopen(path,"w");
+	int size;
+	int size_tot=0;
+  Address mit;
+	int* n_packet = (int*)riceviRawClient(&size);
+
+  for(int i= 0; i< *n_packet; i++){
+	    char* buffer = (char*) riceviRawClient(&size);
       printf("%s\n",buffer);
       printf("%d\n",size);
       size_tot+= size;
