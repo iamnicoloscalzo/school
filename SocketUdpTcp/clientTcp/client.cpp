@@ -47,13 +47,13 @@ int main(int argc, char* argv[])
     /* Stampa il messaggio ricevuto indietro dal server
       La funzione recv() riceve un messaggio da un socket.
    */
-    int ret = 0;
+  /*  int ret = 0;
     char* buff = (char *)socket.riceviRawClient(&ret);
 
     printf("From: %s\n", server.getIp());
     printf("Da server ho ricevuto [%d] bytes: %s\n", ret, buff);
 
-    free(buff);
+    free(buff);*/
 
     return 0;
 }

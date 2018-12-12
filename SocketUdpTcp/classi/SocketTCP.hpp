@@ -190,8 +190,8 @@ void* SocketTCP::riceviRawClient(int* nBytes)
 	    bzero(buff, BUFSIZE + 1);
 	    int ret = recv(sockid, buff, BUFSIZE, 0);
 	    if (ret < 0){
-        error("ERRORE in recvfrom\n");
-      }
+			error("ERRORE in recvfrom\n");
+		}
 	    *nBytes = ret;
 	    return strdup(buff);
 }
