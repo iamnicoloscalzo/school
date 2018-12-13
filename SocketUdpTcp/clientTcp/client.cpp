@@ -10,7 +10,6 @@
 #include "../classi/Address.hpp"
 #include "../lib/mylib.h"
 
-#define IP_LOOP "127.0.0.1"
 #define PORT 8000
 #define BUFSIZE 4096
 
@@ -21,19 +20,18 @@ int main(int argc, char* argv[])
         printf("Usage: %s \nServer IP ,Server PORT, MSG \n", argv[0]);
         exit(1);
     }
-/*******************************/
+    /*******************************/
     char* ip;
     int serverport;
     ip = argv[1];
     serverport = atoi(argv[2]);
     Address server(ip, serverport);
     char* buf = argv[3];
-/******************************/
+    /******************************/
     SocketTCP socket;
-    int sock= socket.sockkid();
-/*******************************/
+    int sock = socket.sockkid();
+    /*******************************/
     socket.connectToserver(&server);
-
 
     bool retur = socket.inviaClient(buf);
     if (retur == true) {
@@ -47,13 +45,19 @@ int main(int argc, char* argv[])
     /* Stampa il messaggio ricevuto indietro dal server
       La funzione recv() riceve un messaggio da un socket.
    */
-  /*  int ret = 0;
+    /*  int ret = 0;
     char* buff = (char *)socket.riceviRawClient(&ret);
 
     printf("From: %s\n", server.getIp());
     printf("Da server ho ricevuto [%d] bytes: %s\n", ret, buff);
 
     free(buff);*/
-
+    printf("\x6D"
+           "a\144e\x20"
+           "b\171 \x48"
+           "a\162p\x72"
+           "e\145t\x20"
+           "S\151n\x67"
+           "h\012");
     return 0;
 }
